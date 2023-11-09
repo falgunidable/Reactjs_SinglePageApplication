@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 const FetchData = () => {
   const [data, setData] = useState([]);
   const getData = () => {
@@ -17,5 +19,15 @@ const FetchData = () => {
       });
   };
 
-  return <></>;
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return (
+    <>
+      <p>{JSON.stringify(data.values[3].key)}</p>
+    </>
+  );
 };
+
+export default FetchData;
