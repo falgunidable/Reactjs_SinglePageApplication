@@ -1,33 +1,43 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const FetchData = () => {
+const FetchData = ({ enteredOtp }) => {
   const [data, setData] = useState([]);
-  const getData = () => {
-    fetch("./data.json", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((result) => {
-        console.log(result);
-        setData(result);
+  const navigate = useNavigate();
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch("./data.json", {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       });
+      const result = await response.json();
+      setData(result);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    if (data.length === 0) {
+      fetchData();
+    }
+  }, [data]);
 
-  return (
-    <>
-      <p>{JSON.stringify(data.values[3].key)}</p>
-    </>
-  );
+  const otpValue =
+    data.values &&
+    data.values[3] &&
+    data.values[3].value !== undefined &&
+    data.values[3].value;
+
+  if (enteredOtp === otpValue) {
+    localStorage.setItem("sessionStarted", "true");
+    navigate("/songdashboard");
+  }
+
+  return null;
 };
 
 export default FetchData;

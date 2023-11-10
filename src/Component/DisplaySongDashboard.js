@@ -22,7 +22,7 @@ const DisplaySongDashboard = () => {
     if (storedData && Array.isArray(storedData)) {
       setTableData(storedData);
     }
-  }, [tableData]); // Empty dependency array ensures the effect runs only once on component mount
+  }, []); // Empty dependency array ensures the effect runs only once on component mount
 
   return (
     <table className="table table-hover table-responsive">

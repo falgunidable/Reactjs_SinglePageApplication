@@ -12,20 +12,36 @@ const RightSide = () => {
   const [data, setData] = useState(songValues);
 
   const storeData = () => {
-    var existingData = JSON.parse(localStorage.getItem("SongData"));
+    var existingData = JSON.parse(localStorage.getItem("SongData")) || [];
 
-    if (!Array.isArray(existingData)) {
-      // If existingData is not an array, initialize a new array
-      existingData = [];
+    // Handle file input separately
+    const fileInput = document.getElementById("songimg");
+    if (fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        const imageDataURL = e.target.result;
+
+        // Add the new set of data to the array with the image data URL
+        existingData.push({ ...data, songimg: imageDataURL });
+
+        // Store the updated array in local storage
+        localStorage.setItem("SongData", JSON.stringify(existingData));
+        console.log("Data stored in local storage:", data);
+        setData(songValues);
+      };
+
+      reader.readAsDataURL(file);
+    } else {
+      // Add the new set of data to the array without the image data URL
+      existingData.push(data);
+
+      // Store the updated array in local storage
+      localStorage.setItem("SongData", JSON.stringify(existingData));
+      console.log("Data stored in local storage:", data);
+      setData(songValues);
     }
-
-    // Add the new set of data to the array
-    existingData.push(data);
-
-    // Store the updated array in local storage
-    localStorage.setItem("SongData", JSON.stringify(existingData));
-    console.log("Data stored in local storage:", data);
-    setData(songValues);
   };
 
   const handleChange = (e) => {
@@ -41,6 +57,19 @@ const RightSide = () => {
     }
   };
 
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const storedData = JSON.parse(localStorage.getItem("SongData")) || [];
+      setData(storedData);
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   return (
     <div className="p-4">
       <div className="d-flex justify-content-between">
@@ -54,8 +83,6 @@ const RightSide = () => {
         </button>
       </div>
       <hr className="mt-5" />
-      <DisplaySongDashboard />
-
       {/* Modal */}
       <div
         className="modal fade"
@@ -151,6 +178,7 @@ const RightSide = () => {
           </div>
         </div>
       </div>
+      <DisplaySongDashboard />
     </div>
   );
 };

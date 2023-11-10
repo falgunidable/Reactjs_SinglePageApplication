@@ -1,7 +1,15 @@
 import LeftSide from "./LeftSide";
 import RightSide from "./RightSide";
+import { useNavigate } from "react-router-dom";
 
 const SongDash = () => {
+  const navigate = useNavigate();
+
+  const logoutUser = () => {
+    localStorage.setItem("sessionStarted", "false");
+    navigate("/");
+  };
+
   return (
     <div className="container-fluid">
       <div className="row">
@@ -10,6 +18,7 @@ const SongDash = () => {
           <div
             className="p-2 text-center mb-4 mt-auto"
             style={{ cursor: "pointer" }}
+            onClick={logoutUser}
           >
             <i class="bi bi-box-arrow-right"></i> Logout
           </div>
